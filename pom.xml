@@ -6,7 +6,7 @@
 
     <groupId>nl.utwente.sysml2petrinet</groupId>
     <artifactId>SysML2PetriNet</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <dependencies>
         <!-- EMF Core -->
         <dependency>
@@ -49,11 +49,6 @@
             <artifactId>gson</artifactId>
             <version>2.13.1</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.eclipse.uml2</groupId>-->
-<!--            <artifactId>uml</artifactId>-->
-<!--            <version>5.0.0-v20140602-0749</version>-->
-<!--        </dependency>-->
         <dependency>
             <artifactId>org.omg.sysml</artifactId>
             <groupId>sysml</groupId>
