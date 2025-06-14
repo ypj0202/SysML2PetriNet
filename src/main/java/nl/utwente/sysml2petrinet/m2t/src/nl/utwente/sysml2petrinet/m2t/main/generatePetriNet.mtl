@@ -1,0 +1,45 @@
+[comment encoding = UTF-8 /]
+
+[module generatePetriNet('http://www.example.org/petrinet')]
+
+[template public generatePetrinet(aPetriNet : PetriNet)]
+[comment @main /]
+[file (aPetriNet.name + '.pnml', false, 'UTF-8')]
+<?xml version="1.0" encoding="iso-8859-1"?>
+<pnml>
+  <net id="[aPetriNet.name/]" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    [for (node : Node | aPetriNet.nodes)]
+      [if (node.oclIsTypeOf(Place))]
+        [place2pnml(node.oclAsType(Place))/]
+      [elseif (node.oclIsTypeOf(Transition))]
+        [transition2pnml(node.oclAsType(Transition))/]
+      [/if]
+    [/for]
+    [for (arc : Arc | aPetriNet.arcs)]
+      [arc2pnml(arc)/]
+    [/for]
+  </net>
+</pnml>
+[/file]
+[/template]
+
+[template public place2pnml(aPlace : Place)]
+    <place id="[aPlace.name/]">
+      <initialMarking>
+        <value>[aPlace.initialMarking/]</value>
+      </initialMarking>
+    </place>
+[/template]
+
+[template public transition2pnml(aTransition : Transition)]
+    <transition id="[aTransition.name/]">
+	</transition>
+[/template]
+
+[template public arc2pnml(anArc : Arc)]
+    <arc id="[anArc.name/]" source="[anArc.source.name/]" target="[anArc.target.name/]">
+      <inscription>
+        <value>[anArc.weight/]</value>
+      </inscription>
+    </arc>
+[/template] 

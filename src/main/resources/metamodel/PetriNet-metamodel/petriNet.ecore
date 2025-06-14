@@ -23,9 +23,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Transition" eSuperTypes="#//Node"/>
   <eClassifiers xsi:type="ecore:EClass" name="Arc">
-  <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-    <details key="constraints" value="ArcTypeConstraint"/>
-  </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="ArcTypeConstraint"/>
+    </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
       <details key="ArcTypeConstraint" value="((self.source.oclIsTypeOf(Place)) implies (self.target.oclIsTypeOf(Transition))) and ((self.source.oclIsTypeOf(Transition)) implies (self.target.oclIsTypeOf(Place)))"/>
     </eAnnotations>
