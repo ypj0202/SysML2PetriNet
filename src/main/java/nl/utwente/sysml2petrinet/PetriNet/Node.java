@@ -5,8 +5,8 @@ import java.util.List;
 
 public abstract class Node {
     private String name;
-    private List<Arc> outgoingArcs;
-    private List<Arc> incomingArcs;
+    private final List<Arc> outgoingArcs;
+    private final List<Arc> incomingArcs;
 
     public Node() {
         this.outgoingArcs = new ArrayList<>();

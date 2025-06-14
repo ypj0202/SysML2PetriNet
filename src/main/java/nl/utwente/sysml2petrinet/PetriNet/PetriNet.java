@@ -5,8 +5,8 @@ import java.util.List;
 
 public class PetriNet {
     private String name;
-    private List<Node> nodes;
-    private List<Arc> arcs;
+    private final List<Node> nodes;
+    private final List<Arc> arcs;
 
     public PetriNet() {
         this.nodes = new ArrayList<>();
