@@ -36,4 +36,9 @@ public class PetriNet {
     public void addArc(Arc arc) {
         this.arcs.add(arc);
     }
+
+    public void setArcs(List<Arc> arcs) {
+        this.arcs.removeAll(arcs);
+        this.arcs.addAll(arcs);
+    }
 }

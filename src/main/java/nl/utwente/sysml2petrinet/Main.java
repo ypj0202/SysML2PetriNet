@@ -16,11 +16,12 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
         try {
-            String filePath = "src/main/resources/model/test-correct.sysml";
+            String filePath = "src/main/resources/model/sample.sysml";
             String outputDir = "src/main/resources/model/output";
-            String outputXMI = outputDir + "/output.xmi";
+            String outputXMI = outputDir + "/sample.xmi";
             SysML2PetriNet sysML2PetriNet = new SysML2PetriNet();
-            sysML2PetriNet.transform(filePath, outputXMI, outputDir, true);
+            //sysML2PetriNet.transform(filePath, outputXMI, outputDir, false);
+            sysML2PetriNet.transformMultiple("src/main/resources/model/", "src/main/resources/model/output/", false);
         } catch (Exception e) {
             logger.error("Error in main", e);
         }

@@ -44,6 +44,12 @@ public class SysML2PetriNet {
         }
     }
 
+    public void transformMultiple(String fileDir, String outputDir,Boolean directTransformation) throws Exception {
+        for(File f : processor.listSysmlFiles(new File(fileDir), false)){
+            transform(f.getAbsolutePath(), outputDir + f.getName() + ".xmi", outputDir, directTransformation);
+        }
+    }
+
     private void transformation(String outputXMI, String outputDir) throws IOException {
         // Initialize the Acceleo generator and perform m2t generation
         URI modelURI = URI.createFileURI(outputXMI);
@@ -56,5 +62,6 @@ public class SysML2PetriNet {
     private void transformationDirect(PetriNet petriNet, String outputDir, String filePath) throws IOException {
         TransformerPNML transformerPnml = new TransformerPNML(petriNet, filePath);
         transformerPnml.saveToPNML(outputDir);
+        logger.info("Saved PNML to: {}", outputDir);
     }
 }

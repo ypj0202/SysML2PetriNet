@@ -4,7 +4,6 @@ import com.google.inject.Injector;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.xtext.SysMLStandaloneSetup;
@@ -22,12 +21,12 @@ public class SysMLProcessor {
 
     /**
      * A class to initialise sysml resources and resolve all proxies for derived attribute in the model
+     *
      * @param modelDir Directory of the model
      */
     public SysMLProcessor(String modelDir) {
         this.modelDir = modelDir;
         KerMLStandaloneSetup.doSetup();
-        SysMLStandaloneSetup.doSetup();
         SysMLPackage.eINSTANCE.eClass();
         Injector injector = new SysMLStandaloneSetup().createInjectorAndDoEMFRegistration();
         this.resourceSet = injector.getInstance(XtextResourceSet.class);
@@ -36,16 +35,17 @@ public class SysMLProcessor {
 
     /**
      * Recursively find all .sysml files in a given folder
+     *
      * @param dir Directory that contains .sysml file
      * @return list of File object
      */
-    private List<File> listSysmlFiles(File dir) {
+    public List<File> listSysmlFiles(File dir, boolean recursive) {
         List<File> result = new ArrayList<>();
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isDirectory()) {
-                    result.addAll(listSysmlFiles(file));
+                if (file.isDirectory() && recursive) {
+                    result.addAll(listSysmlFiles(file, true));
                 } else if (file.getName().endsWith(".sysml")) {
                     result.add(file);
                 }
@@ -59,14 +59,14 @@ public class SysMLProcessor {
      */
     private void loadSysMLFiles() {
         try {
-            List<File> allSysmlFiles = listSysmlFiles(new File(modelDir));
+            List<File> allSysmlFiles = listSysmlFiles(new File(modelDir), true);
             logger.info("Found {} sysml library files", allSysmlFiles.size());
 
             for (File f : allSysmlFiles) {
                 resourceSet.getResource(URI.createFileURI(f.getAbsolutePath()), true);
             }
             logger.info("Loaded {} sysml library files", allSysmlFiles.size());
-            EcoreUtil.resolveAll(resourceSet);
+
             logger.info("All proxies processed.");
         } catch (Exception e) {
             logger.error("Error loading SysML files", e);

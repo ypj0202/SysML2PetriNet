@@ -4,5 +4,4 @@ action error{
 	}
 	then t1;
 	action t1;
-	
 }
