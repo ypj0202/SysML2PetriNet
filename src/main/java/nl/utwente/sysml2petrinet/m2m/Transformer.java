@@ -27,69 +27,74 @@ public class Transformer {
         this.rootAction = rootElement.getOwnedElement().getFirst();
     }
 
-    private boolean isTransition(Element element) {
-        return element instanceof ForkNode || element instanceof MergeNode || element instanceof JoinNode || (element instanceof ActionUsage && !isPlace(element));
-    }
+//    /**
+//     * @deprecated
+//     * @param element element
+//     * @return boolean result
+//     */
+//    private boolean isTransition(Element element) {
+//        return element instanceof ForkNode || element instanceof MergeNode || element instanceof JoinNode || (element instanceof ActionUsage && !isPlace(element));
+//    }
+//
+//    private boolean isPlace(Element element) {
+//        var member = element.getOwnedElement();
+//        return element instanceof ActionUsage && member.stream().anyMatch(e -> e.getName() != null && (e.getName().equals("initialMarking") || e.getName().equals("pIn") || e.getName().equals("pOut")));
+//    }
 
-    private boolean isPlace(Element element) {
-        var member = element.getOwnedElement();
-        return element instanceof ActionUsage && member.stream().anyMatch(e -> e.getName() != null && (e.getName().equals("initialMarking") || e.getName().equals("pIn") || e.getName().equals("pOut")));
-    }
+//    private Integer getInitialMarking(Element element) {
+//        var member = element.getOwnedElement();
+//        for (Element e : member) {
+//            if (e.getName() != null && e.getName().equals("initialMarking")) {
+//                if (e instanceof AttributeUsage attr) {
+//                    return getValue(attr);
+//                }
+//            }
+//        }
+//        logger.debug("No initial marking found for {}, default to 0.", element.getName());
+//        return 0;
+//    }
 
-    private Integer getInitialMarking(Element element) {
-        var member = element.getOwnedElement();
-        for (Element e : member) {
-            if (e.getName() != null && e.getName().equals("initialMarking")) {
-                if (e instanceof AttributeUsage attr) {
-                    return getValue(attr);
-                }
-            }
-        }
-        logger.debug("No initial marking found for {}, default to 0.", element.getName());
-        return 0;
-    }
+//    /**
+//     * Get weight from arc in the model, if there is not presented, then by default, the weight for in and out will be 1.
+//     *
+//     * @param element Element from sysml
+//     * @return weight in map
+//     */
+//    private Map<String, Integer> getWeights(Element element) {
+//        Map<String, Integer> weights = new HashMap<>();
+//        // Default weight is set to 1
+//        weights.put("in", 1);
+//        weights.put("out", 1);
+//        var members = element.getOwnedElement();
+//        for (Element weight : members) {
+//            if (weight instanceof AttributeUsage) {
+//                if (weight.getName().equals("pIn")) {
+//                    weights.put("in", getValue(weight));
+//                }
+//                if (weight.getName().equals("pOut")) {
+//                    weights.put("out", getValue(weight));
+//                }
+//            }
+//        }
+//        return weights;
+//    }
 
-    /**
-     * Get weight from arc in the model, if there is not presented, then by default, the weight for in and out will be 1.
-     *
-     * @param element Element from sysml
-     * @return weight in map
-     */
-    private Map<String, Integer> getWeights(Element element) {
-        Map<String, Integer> weights = new HashMap<>();
-        // Default weight is set to 1
-        weights.put("in", 1);
-        weights.put("out", 1);
-        var members = element.getOwnedElement();
-        for (Element weight : members) {
-            if (weight instanceof AttributeUsage) {
-                if (weight.getName().equals("pIn")) {
-                    weights.put("in", getValue(weight));
-                }
-                if (weight.getName().equals("pOut")) {
-                    weights.put("out", getValue(weight));
-                }
-            }
-        }
-        return weights;
-    }
-
-    /**
-     * Get value from element object for weight
-     *
-     * @param element Parent element to get the value from
-     * @return Obtained value, if no value found, return 1
-     */
-    private Integer getValue(Element element) {
-        var member = element.getOwnedElement();
-        for (Element element1 : member) {
-            if (element1 instanceof LiteralInteger) {
-                return ((LiteralInteger) element1).getValue();
-            }
-        }
-        logger.debug("No value found for {}", element.getName());
-        return 1; // Default to 1 if no value found
-    }
+//    /**
+//     * Get value from element object for weight
+//     *
+//     * @param element Parent element to get the value from
+//     * @return Obtained value, if no value found, return 1
+//     */
+//    private Integer getValue(Element element) {
+//        var member = element.getOwnedElement();
+//        for (Element element1 : member) {
+//            if (element1 instanceof LiteralInteger) {
+//                return ((LiteralInteger) element1).getValue();
+//            }
+//        }
+//        logger.debug("No value found for {}", element.getName());
+//        return 1; // Default to 1 if no value found
+//    }
 
     /**
      * Postprocess merge node so it fits definition for merge node. Not the best solution but it works, as it does not fit in the main transformation
@@ -169,59 +174,162 @@ public class Transformer {
     }
 
 
-    /**
-     * Transform input model to intermediate PetriNet object
-     *
-     * @return Transformed PetriNet object
-     * @throws Exception Violation on constraint
-     */
-    public PetriNet
-    transform() throws Exception {
-        logger.info("Starting PetriNet transformation");
+//    /**
+//     * Transform input model to intermediate PetriNet object
+//     * @deprecated
+//     * @return Transformed PetriNet object
+//     * @throws Exception Violation on constraint
+//     */
+//    public PetriNet transformWeighted() throws Exception {
+//        logger.info("Starting PetriNet transformation");
+//        PetriNet petriNet = new PetriNet();
+//        Map<String, Node> nodeMap = new HashMap<>();
+//        Map<String, Map<String, Integer>> placeWeights = new HashMap<>();
+//        logger.info("Transforming model: {}", rootAction.getName());
+//
+//        if (rootElement != null && !rootElement.getMember().isEmpty()) {
+//            petriNet.setName(rootAction.getName());
+//            var elements = rootAction.getOwnedElement();
+//            logger.info("Processing {} elements", elements.size());
+//
+//            // Create all places and transitions
+//            for (Element element : elements) {
+//                if (isPlace(element)) {
+//                    Place place = new Place();
+//                    place.setName(element.getName());
+//                    place.setInitialMarking(getInitialMarking(element));
+//                    nodeMap.put(element.getName(), place);
+//                    petriNet.addNode(place);
+//                    logger.info("Created place: {} with initial marking: {}", place.getName(), place.getInitialMarking());
+//
+//                    // Store weights for this place
+//                    placeWeights.put(element.getName(), getWeights(element));
+//                } else if (isTransition(element)) {
+//                    Transition transition = new Transition();
+//                    transition.setName(element.getName());
+//                    if (element instanceof MergeNode) {
+//                        transition.setIsMerge(true);
+//                    }
+//                    nodeMap.put(element.getName(), transition);
+//                    petriNet.addNode(transition);
+//                    logger.info("Created transition: {}", transition.getName());
+//                }
+//            }
+//            // Handle start and done
+//            var start = ((ActionUsage) rootAction).getOwnedMembership().stream().filter(a -> a != null && a.getMemberElement() != null && a.getMemberElement().getName() != null && a.getMemberElement().getName().equals("start")).toList().getFirst();
+//
+//            if (start != null) {
+//                Transition transition = new Transition();
+//                transition.setName(start.getMemberElement().getName());
+//                nodeMap.put(start.getMemberElement().getName(), transition);
+//                petriNet.addNode(transition);
+//                logger.info("Created start transition: {}", transition.getName());
+//            }
+//            // Create arcs
+//            for (Element element : elements) {
+//                if (element instanceof SuccessionAsUsage succession) {
+//                    var sourceElements = succession.getSource();
+//                    var targetElements = succession.getTarget();
+//
+//                    if (!sourceElements.isEmpty() && !targetElements.isEmpty()) {
+//                        Element source = sourceElements.getFirst();
+//                        Element target = targetElements.getFirst();
+//                        // For done
+//                        if (target.getName().equals("done") && !nodeMap.containsKey(target.getName())) {
+//                            Transition transition = new Transition();
+//                            transition.setName(target.getName());
+//                            nodeMap.put(target.getName(), transition);
+//                            petriNet.addNode(transition);
+//                        }
+//                        Node sourceNode = nodeMap.get(source.getName());
+//                        Node targetNode = nodeMap.get(target.getName());
+//
+//                        if (sourceNode == null || targetNode == null) {
+//                            logger.error("Source or target node not found for succession: {}", element.toString());
+//                            throw new Exception("Source or target node not found");
+//                        }
+//
+//                        // Create arc, using uuid as its id
+//                        Arc arc = new Arc();
+//                        arc.setName(String.valueOf(UUID.randomUUID()));
+//                        var p2p = false;
+//                        // Determine if this is an input arc (Place -> Transition) or output arc (Transition -> Place)
+//                        if (sourceNode instanceof Place && targetNode instanceof Transition) {
+//                            // In: Place -> Transition
+//                            arc.setWeight(placeWeights.get(source.getName()).get("out"));
+//                            logger.debug("Created input arc from {} to {} with weight {}", source.getName(), target.getName(), arc.getWeight());
+//                        } else if (targetNode instanceof Place && sourceNode instanceof Transition) {
+//                            // Out: Transition -> Place
+//                            arc.setWeight(placeWeights.get(target.getName()).get("in"));
+//                            logger.debug("Created output arc from {} to {} with weight {}", source.getName(), target.getName(), arc.getWeight());
+//                        } else if (sourceNode instanceof Place && targetNode instanceof Place) {
+//                            // Place -> Place, will create a new transition in between
+//                            Arc arc1 = new Arc();
+//                            arc1.setName(String.valueOf(UUID.randomUUID()));
+//                            Transition transitionBetweenPlaces = new Transition();
+//                            transitionBetweenPlaces.setName(source.getName() + "->" + target.getName());
+//                            nodeMap.put(transitionBetweenPlaces.getName(), transitionBetweenPlaces);
+//                            petriNet.addNode(transitionBetweenPlaces);
+//                            arc.setWeight(placeWeights.get(source.getName()).get("out"));
+//                            arc1.setWeight(placeWeights.get(target.getName()).get("in"));
+//                            arc.setSource(sourceNode);
+//                            arc.setTarget(transitionBetweenPlaces);
+//                            arc1.setSource(transitionBetweenPlaces);
+//                            arc1.setTarget(targetNode);
+//                            petriNet.addArc(arc1);
+//                            p2p = true;
+//                        } else {
+//                            logger.error("Transition to transition or place to place not allowed");
+//                            throw new Exception("Transition to transition not allowed");
+//                        }
+//                        if (!p2p) {
+//                            arc.setSource(sourceNode);
+//                            arc.setTarget(targetNode);
+//                        }
+//                        petriNet.addArc(arc);
+//                        logger.info("Created arc: {}", arc.getName());
+//
+//                    }
+//                }
+//            }
+//        }
+//        return postProcessMergeNode(petriNet);
+//    }
+
+    public PetriNet transform() throws Exception{
+        logger.info("Starting basic PetriNet transformation");
         PetriNet petriNet = new PetriNet();
         Map<String, Node> nodeMap = new HashMap<>();
-        Map<String, Map<String, Integer>> placeWeights = new HashMap<>();
         logger.info("Transforming model: {}", rootAction.getName());
 
         if (rootElement != null && !rootElement.getMember().isEmpty()) {
             petriNet.setName(rootAction.getName());
             var elements = rootAction.getOwnedElement();
             logger.info("Processing {} elements", elements.size());
-
+            var start = ((ActionUsage) rootAction).getOwnedMembership().stream().filter(a -> a != null && a.getMemberElement() != null && a.getMemberElement().getName() != null && a.getMemberElement().getName().equals("start")).toList().getFirst();
+            elements.add(start.getMemberElement());
             // Create all places and transitions
             for (Element element : elements) {
-                if (isPlace(element)) {
-                    Place place = new Place();
-                    place.setName(element.getName());
-                    place.setInitialMarking(getInitialMarking(element));
-                    nodeMap.put(element.getName(), place);
-                    petriNet.addNode(place);
-                    logger.info("Created place: {} with initial marking: {}", place.getName(), place.getInitialMarking());
-
-                    // Store weights for this place
-                    placeWeights.put(element.getName(), getWeights(element));
-                } else if (isTransition(element)) {
+                if(element instanceof ForkNode || element instanceof MergeNode || element instanceof JoinNode) {
                     Transition transition = new Transition();
-                    transition.setName(element.getName());
-                    if (element instanceof MergeNode) {
+                    if(element instanceof MergeNode){
                         transition.setIsMerge(true);
                     }
+                    transition.setName(element.getName());
                     nodeMap.put(element.getName(), transition);
                     petriNet.addNode(transition);
-                    logger.info("Created transition: {}", transition.getName());
+                } else if(element instanceof ActionUsage){
+                    Place place = new Place();
+                    place.setName(element.getName());
+                    if(element.getName().equals("start")){
+                        place.setInitialMarking(1);
+                    } else{
+                        place.setInitialMarking(0);
+                }
+                    nodeMap.put(element.getName(), place);
+                    petriNet.addNode(place);
                 }
             }
-            // Handle start and done
-            var start = ((ActionUsage) rootAction).getOwnedMembership().stream().filter(a -> a != null && a.getMemberElement() != null && a.getMemberElement().getName() != null && a.getMemberElement().getName().equals("start")).toList().getFirst();
-
-            if (start != null) {
-                Transition transition = new Transition();
-                transition.setName(start.getMemberElement().getName());
-                nodeMap.put(start.getMemberElement().getName(), transition);
-                petriNet.addNode(transition);
-                logger.info("Created start transition: {}", transition.getName());
-            }
-            // Create arcs
             for (Element element : elements) {
                 if (element instanceof SuccessionAsUsage succession) {
                     var sourceElements = succession.getSource();
@@ -232,10 +340,11 @@ public class Transformer {
                         Element target = targetElements.getFirst();
                         // For done
                         if (target.getName().equals("done") && !nodeMap.containsKey(target.getName())) {
-                            Transition transition = new Transition();
-                            transition.setName(target.getName());
-                            nodeMap.put(target.getName(), transition);
-                            petriNet.addNode(transition);
+                            Place place = new Place();
+                            place.setName(target.getName());
+                            place.setInitialMarking(0);
+                            nodeMap.put(target.getName(), place);
+                            petriNet.addNode(place);
                         }
                         Node sourceNode = nodeMap.get(source.getName());
                         Node targetNode = nodeMap.get(target.getName());
@@ -244,47 +353,28 @@ public class Transformer {
                             logger.error("Source or target node not found for succession: {}", element.toString());
                             throw new Exception("Source or target node not found");
                         }
-
-                        // Create arc, using uuid as its id
                         Arc arc = new Arc();
                         arc.setName(String.valueOf(UUID.randomUUID()));
-                        var p2p = false;
-                        // Determine if this is an input arc (Place -> Transition) or output arc (Transition -> Place)
-                        if (sourceNode instanceof Place && targetNode instanceof Transition) {
-                            // In: Place -> Transition
-                            arc.setWeight(placeWeights.get(source.getName()).get("out"));
-                            logger.debug("Created input arc from {} to {} with weight {}", source.getName(), target.getName(), arc.getWeight());
-                        } else if (targetNode instanceof Place && sourceNode instanceof Transition) {
-                            // Out: Transition -> Place
-                            arc.setWeight(placeWeights.get(target.getName()).get("in"));
-                            logger.debug("Created output arc from {} to {} with weight {}", source.getName(), target.getName(), arc.getWeight());
-                        } else if (sourceNode instanceof Place && targetNode instanceof Place) {
-                            // Place -> Place, will create a new transition in between
+                        if (sourceNode instanceof Place && targetNode instanceof Place) {
                             Arc arc1 = new Arc();
                             arc1.setName(String.valueOf(UUID.randomUUID()));
                             Transition transitionBetweenPlaces = new Transition();
                             transitionBetweenPlaces.setName(source.getName() + "->" + target.getName());
                             nodeMap.put(transitionBetweenPlaces.getName(), transitionBetweenPlaces);
                             petriNet.addNode(transitionBetweenPlaces);
-                            arc.setWeight(placeWeights.get(source.getName()).get("out"));
-                            arc1.setWeight(placeWeights.get(target.getName()).get("in"));
+                            arc.setWeight(1);
+                            arc1.setWeight(1);
                             arc.setSource(sourceNode);
                             arc.setTarget(transitionBetweenPlaces);
                             arc1.setSource(transitionBetweenPlaces);
                             arc1.setTarget(targetNode);
                             petriNet.addArc(arc1);
-                            p2p = true;
-                        } else {
-                            logger.error("Transition to transition or place to place not allowed");
-                            throw new Exception("Transition to transition not allowed");
-                        }
-                        if (!p2p) {
+                        }else{
+                            arc.setWeight(1);
                             arc.setSource(sourceNode);
                             arc.setTarget(targetNode);
                         }
                         petriNet.addArc(arc);
-                        logger.info("Created arc: {}", arc.getName());
-
                     }
                 }
             }
