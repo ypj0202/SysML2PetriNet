@@ -5,6 +5,7 @@ public class Arc {
     private int weight;
     private Node source;
     private Node target;
+    private String guard;
 
     public Arc() {
         this.weight = 1;
@@ -47,4 +48,8 @@ public class Arc {
             target.getIncomingArcs().add(this);
         }
     }
+    public String getGuard() {return guard;}
+    public void setGuard(String guard) {this.guard = guard;}
+
+
 }

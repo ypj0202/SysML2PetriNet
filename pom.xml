@@ -234,7 +234,7 @@
             <artifactId>nl.utwente.sysml2petrinet.m2t</artifactId>
             <version>1.0.0.202506131747</version>
             <scope>system</scope>
-            <systemPath>${basedir}/src/main/resources/acceleo/nl.utwente.sysml2petrinet.m2t_1.0.0.202506131840.jar</systemPath>
+            <systemPath>${basedir}/src/main/resources/acceleo/nl.utwente.sysml2petrinet.m2t_1.0.1.202507052159.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -266,6 +266,39 @@
             <scope>system</scope>
             <systemPath>${basedir}/src/main/resources/acceleo/org.eclipse.core.contenttype_3.9.300.v20231218-0909.jar</systemPath>
         </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
+            <version>2.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-matchers</artifactId>
+            <version>2.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-legacy</artifactId>
+            <version>2.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.thaiopensource</groupId>
+            <artifactId>jing</artifactId>
+            <version>20091111</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
     <properties>

@@ -4,7 +4,14 @@ import com.google.inject.Injector;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
+import org.eclipse.xtext.validation.Issue;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.xtext.SysMLStandaloneSetup;
 import org.omg.kerml.xtext.KerMLStandaloneSetup;
@@ -66,7 +73,7 @@ public class SysMLProcessor {
                 resourceSet.getResource(URI.createFileURI(f.getAbsolutePath()), true);
             }
             logger.info("Loaded {} sysml library files", allSysmlFiles.size());
-
+//            EcoreUtil.resolveAll(resourceSet);
             logger.info("All proxies processed.");
         } catch (Exception e) {
             logger.error("Error loading SysML files", e);
@@ -96,12 +103,21 @@ public class SysMLProcessor {
                 logger.error("Failed to load resource or resource is empty.");
                 return null;
             }
+//            EcoreUtil.resolveAll(resourceSet);
+//            IResourceServiceProvider serviceProvider = IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(resource.getURI());
+//            IResourceValidator validator = serviceProvider.get(IResourceValidator.class);
+//            List<Issue> issues = validator.validate(resource, CheckMode.NORMAL_AND_FAST, CancelIndicator.NullImpl);
+//
+//            for (Issue issue : issues) {
+//                if (issue.getSeverity() == Severity.WARNING) {
+//                    logger.error("Warning: {}", issue.getMessage());
+//                    throw new Exception("Input model has warning(s)");
+//                }
+//            }
             if (!resource.getErrors().isEmpty() || !resource.getWarnings().isEmpty()) {
                 logger.error("Input model errors:");
                 resource.getErrors().forEach(err -> logger.error("  {}", err));
-                logger.warn("Input model warnings:");
-                resource.getWarnings().forEach(warn -> logger.warn("  {}", warn));
-                throw new Exception("Input model has errors or warnings");
+                throw new Exception("Input model has errors");
             }
 
             return (Namespace) resource.getContents().getFirst();

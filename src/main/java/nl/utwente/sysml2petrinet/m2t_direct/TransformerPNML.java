@@ -43,55 +43,46 @@ public class TransformerPNML {
         String baseName = baseFilename.substring(0, baseFilename.lastIndexOf('.'));
         String outputPath = Paths.get(outputDirectory, baseName + ".pnml").toString();
 
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(outputPath), StandardCharsets.ISO_8859_1)) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(outputPath), StandardCharsets.UTF_8)) {
             // Write XML declaration, and PNML header
-            writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.write(System.lineSeparator());
             writer.write("<pnml>");
             writer.write(System.lineSeparator());
             writer.write("  ");
-            writer.write("<net id=\"" + petriNet.getName() + "\" type=\"http://www.pnml.org/version-2009/grammar/pnmlcoremodel\">");
+            // PTNet type
+            writer.write("<net id=\"" + petriNet.getName() + "\" type=\"http://www.pnml.org/version-2009/grammar/ptnet\">");
             writer.write(System.lineSeparator());
+            // Add a page element
+            writer.write("    <page id=\"page1\">\n");
             // Write places and transitions
             for (Node node : petriNet.getNodes()) {
                 if (node instanceof Place place) {
-                    writer.write("            <place id=\"" + place.getName() + "\">");
-                    writer.write(System.lineSeparator());
+                    writer.write("      <place id=\"" + place.getName() + "\">\n");
                     // Write initial marking
                     if (place.getInitialMarking() > 0) {
-                        writer.write("              <initialMarking>");
-                        writer.write(System.lineSeparator());
-                        writer.write("                <value>" + place.getInitialMarking() + "</value>");
-                        writer.write(System.lineSeparator());
-                        writer.write("              </initialMarking>");
-                        writer.write(System.lineSeparator());
+                        writer.write("        <initialMarking>\n");
+                        writer.write("          <value>" + place.getInitialMarking() + "</value>\n");
+                        writer.write("        </initialMarking>\n");
                     }
-                    writer.write("            </place>");
-                    writer.write(System.lineSeparator());
+                    writer.write("      </place>\n");
                 } else if (node instanceof Transition transition) {
-                    writer.write("            <transition id=\"" + transition.getName() + "\">");
-                    writer.write(System.lineSeparator());
-                    writer.write("            </transition>");
-                    writer.write(System.lineSeparator());
+                    writer.write("      <transition id=\"" + transition.getName() + "\">\n");
+                    writer.write("      </transition>\n");
                 }
             }
             // Write arcs
             for (Arc arc : petriNet.getArcs()) {
-                writer.write("          <arc id=\"" + arc.getName() + "\" source=\"" + arc.getSource().getName() + "\" target=\"" + arc.getTarget().getName() + "\">");
-                writer.write(System.lineSeparator());
-                writer.write("            <inscription>");
-                writer.write(System.lineSeparator());
-                writer.write("              <value>" + arc.getWeight() + "</value>");
-                writer.write(System.lineSeparator());
-                writer.write("            </inscription>");
-                writer.write(System.lineSeparator());
-                writer.write("          </arc>");
-                writer.write(System.lineSeparator());
+                writer.write("      <arc id=\"" + arc.getName() + "\" source=\"" + arc.getSource().getName() + "\" target=\"" + arc.getTarget().getName() + "\">\n");
+                writer.write("        <inscription>\n");
+                writer.write("          <value>" + arc.getWeight() + "</value>\n");
+                writer.write("        </inscription>\n");
+                writer.write("      </arc>\n");
             }
-            writer.write("  </net>");
-            writer.write(System.lineSeparator());
-            writer.write("</pnml>");
-            writer.write(System.lineSeparator());
+            // Close page and net
+            writer.write("    </page>\n");
+            writer.write("  </net>\n");
+            writer.write("</pnml>\n");
         }
         logger.info("Saved PNML file to: {}", outputPath);
     }

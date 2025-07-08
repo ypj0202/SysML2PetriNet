@@ -19,19 +19,23 @@ public class SysML2PetriNet {
     private static final Logger logger = LogManager.getLogger(SysML2PetriNet.class);
 
     private final SysMLProcessor processor;
+    private PetriNet petriNet; // For JUnit testing
 
     public SysML2PetriNet(){
         String modelDir = "src/main/resources/sysml.library";
         this.processor = new SysMLProcessor(modelDir);
     }
 
+    public PetriNet getPetriNet() {
+        return petriNet;
+    }
 
-    public void transform(String filePath, String outputXMI, String outputDir,Boolean directTransformation) throws Exception {
+    public void transform(String filePath, String outputXMI, String outputDir, Boolean directTransformation) throws Exception {
         Namespace rootElement = processor.processSysMLFile(filePath);
         if (rootElement != null) {
             logger.info("Model inputted");
             Transformer transformer = new Transformer(rootElement);
-            PetriNet petriNet = transformer.transform();
+            petriNet = transformer.transform();
             if(directTransformation){
                 transformationDirect(petriNet, outputDir, filePath);
             }else {
@@ -40,7 +44,7 @@ public class SysML2PetriNet {
             }
 
         } else {
-            logger.error("Failed to process SysML file");
+            throw new Exception("Failed to process or transform SysML file");
         }
     }
 
