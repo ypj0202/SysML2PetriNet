@@ -1,4 +1,4 @@
-action controNodeDecisionMerge{
+action controlNodeDecisionMerge{
 	attribute guard1;
 	attribute guard2;
 	first start;

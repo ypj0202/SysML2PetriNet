@@ -1,4 +1,4 @@
-action controNodeForkJoin{
+action controlNodeForkJoin{
 	first start;
 	then action  action1;
 	then fork1;
