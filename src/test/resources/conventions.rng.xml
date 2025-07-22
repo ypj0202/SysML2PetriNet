@@ -19,7 +19,7 @@
 
 	<define name="nonnegativeintegerlabel.content">
 		<a:documentation>
-			A non negative integer label is an annotation with a 
+			A non negative integer label is an annotation with a
 			natural number as its value.
 			Its sub-elements occur in any order.
 			It contains the standard annotation content.
@@ -28,11 +28,11 @@
 			<choice>
 				<element name="text">
 					<data type="nonNegativeInteger"
-						datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"/>
+						  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"/>
 				</element>
 				<element name="value">
 					<data type="nonNegativeInteger"
-						datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"/>
+						  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"/>
 				</element>
 			</choice>
 			<ref name="annotationstandard.content"/>
