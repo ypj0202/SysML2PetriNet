@@ -22,7 +22,7 @@ public class Transformer {
     
     /**
      * Generate an XML-safe ID using a simple counter
-     * @return XML-safe ID string
+     *
      */
     private static int idCounter = 1;
     private static String generateXmlSafeId() {
@@ -129,10 +129,21 @@ public class Transformer {
                 for (Arc outgoingArc : relevantArcs) {
                     Node target = outgoingArc.getTarget();
                     Transition clonedDecisionNode = new Transition();
-                    clonedDecisionNode.setName(targetNode.getName() + "_" + outgoingArc.getGuard());
+                    clonedDecisionNode.setName(targetNode.getName() + "_" + cloneCounter++);
                     clonedDecisionNode.setIsDecision(true);
 
                     nodesToAdd.add(clonedDecisionNode);
+                    var guardName = outgoingArc.getGuard(); if (outgoingArc.getGuard() == null) {
+                        guardName = "else";
+                    }
+                    var guardPlace = new Place();
+                    guardPlace.setName(guardName);
+                    var guardArc = new Arc();
+                    guardArc.setName("arc_" + guardName);
+                    guardArc.setSource(guardPlace);
+                    guardArc.setTarget(clonedDecisionNode);
+                    arcsToAdd.add(guardArc);
+                    nodesToAdd.add(guardPlace);
 
                     Arc newArc = new Arc();
                     newArc.setSource(clonedDecisionNode);
@@ -257,9 +268,9 @@ public class Transformer {
                         Arc arc = new Arc();
                         arc.setName(generateXmlSafeId());
                         if (source instanceof DecisionNode) {
-                            var guard = ((TransitionUsage)element).getOwnedFeatureMembership().stream().filter(a->a instanceof TransitionFeatureMembership).toList().getFirst();
-                            if(guard != null){
-                                arc.setGuard(((FeatureReferenceExpression)guard.getMemberElement()).getReferent().getName());
+                            var guard = ((TransitionUsage)element).getOwnedFeatureMembership().stream().filter(a->a instanceof TransitionFeatureMembership).toList();
+                            if(!guard.isEmpty()){
+                                arc.setGuard(((FeatureReferenceExpression)guard.getFirst().getMemberElement()).getReferent().getName());
                             }
                         }
                         if (sourceNode instanceof Place && targetNode instanceof Place) {
@@ -276,7 +287,21 @@ public class Transformer {
                             arc1.setSource(transitionBetweenPlaces);
                             arc1.setTarget(targetNode);
                             petriNet.addArc(arc1);
-                        }else{
+                        } else if (sourceNode instanceof Transition && targetNode instanceof Transition) {
+                            Arc arc2 = new Arc();
+                            arc2.setName(generateXmlSafeId());
+                            Place placeBetweenControlNode = new Place();
+                            placeBetweenControlNode.setName(source.getName() + "_to_" + target.getName());
+                            nodeMap.put(placeBetweenControlNode.getName(), placeBetweenControlNode);
+                            petriNet.addNode(placeBetweenControlNode);
+                            arc.setWeight(1);
+                            arc2.setWeight(1);
+                            arc.setSource(sourceNode);
+                            arc.setTarget(placeBetweenControlNode);
+                            arc2.setSource(placeBetweenControlNode);
+                            arc2.setTarget(targetNode);
+                            petriNet.addArc(arc2);
+                        } else{
                             arc.setWeight(1);
                             arc.setSource(sourceNode);
                             arc.setTarget(targetNode);

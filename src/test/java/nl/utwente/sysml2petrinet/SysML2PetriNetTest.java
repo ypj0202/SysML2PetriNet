@@ -58,12 +58,19 @@ public class SysML2PetriNetTest {
             String outputPath = OUTPUT_DIR + "/";
             
             // Test direct transformation
-            transformer.transform(modelPath, null, outputPath, true);
+            transformer.transform(modelPath, null, outputPath, true, true);
             
             // Verify PNML file was generated
             File pnmlFile = new File(outputPath + "/" + modelFile.replace(".sysml","") + ".pnml");
             assertTrue("PNML file should be generated for " + modelFile, pnmlFile.exists());
-            
+
+            // Test direct transformation
+            transformer.transform(modelPath, null, outputPath, true, false);
+            // Validate PNML against schema
+            validatePNMLFile(pnmlFile.getAbsolutePath());
+            // Verify PNML file was generated
+            assertTrue("PNML file should be generated for " + modelFile, pnmlFile.exists());
+
             // Validate PNML against schema
             validatePNMLFile(pnmlFile.getAbsolutePath());
         }
@@ -76,7 +83,7 @@ public class SysML2PetriNetTest {
     public void testErrorModel() {
         String modelPath = MODEL_DIR + "/errorModel.sysml";
         String outputPath = OUTPUT_DIR + "/errorModel";
-        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, outputPath, true));
+        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, outputPath, true, true));
         assertEquals("Failed to process or transform SysML file", exception.getMessage());
     }
 
@@ -86,7 +93,7 @@ public class SysML2PetriNetTest {
     @Test
     public void testErrorWithoutStart() {
         String modelPath = MODEL_DIR + "/errorWithoutStart.sysml";
-        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, OUTPUT_DIR, true));
+        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, OUTPUT_DIR, true, true));
         assertEquals("No start element found!", exception.getMessage());
     }
 
@@ -96,7 +103,7 @@ public class SysML2PetriNetTest {
     @Test
     public void testErrorWithoutEnd() {
         String modelPath = MODEL_DIR + "/errorWithoutEnd.sysml";
-        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, OUTPUT_DIR, true));
+        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, OUTPUT_DIR, true, true));
         assertEquals("No done element found!", exception.getMessage());
     }
 
@@ -107,7 +114,7 @@ public class SysML2PetriNetTest {
     public void testArcAndNodeNamesAreUnique() throws Exception {
         String modelPath = MODEL_DIR + "/controlNodeAll.sysml";
 
-        transformer.transform(modelPath, null, OUTPUT_DIR, true);
+        transformer.transform(modelPath, null, OUTPUT_DIR, true, true);
         var pt = transformer.getPetriNet();
         
         // Check that all node names are unique
@@ -136,7 +143,7 @@ public class SysML2PetriNetTest {
     public void testDuplicateNodeNames() {
         String modelPath = MODEL_DIR + "/duplicateNodeNames.sysml";
         String outputPath = OUTPUT_DIR + "/duplicateNodeNames";
-        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, outputPath, true));
+        var exception = assertThrows(Exception.class, () -> transformer.transform(modelPath, null, outputPath, true, true));
         assertEquals("Duplicate node name found!", exception.getMessage());
     }
 
@@ -151,7 +158,7 @@ public class SysML2PetriNetTest {
             String outputPath = OUTPUT_DIR + "/";
             String outputXMI = OUTPUT_DIR + "/" + modelFile.replace(".sysml","") + ".xmi";
             // Test non-direct transformation
-            transformer.transform(modelPath, outputXMI, outputPath, false);
+            transformer.transform(modelPath, outputXMI, outputPath, false, true);
 
             // Verify PNML file was generated
             File pnmlFile = new File(outputPath + modelFile.replace(".sysml","") + ".pnml");

@@ -16,11 +16,11 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
         try {
-            String filePath = "src/main/resources/model/duplicateNodeNames.sysml";
+            String filePath = "src/main/resources/model/example.sysml";
             String outputDir = "src/main/resources/model/output";
-            String outputXMI = outputDir + "/duplicateNodeNames.xmi";
+            String outputXMI = outputDir + "/example.xmi";
             SysML2PetriNet sysML2PetriNet = new SysML2PetriNet();
-            sysML2PetriNet.transform(filePath, outputXMI, outputDir, false);
+            sysML2PetriNet.transform(filePath, outputXMI, outputDir, false, false);
             //sysML2PetriNet.transformMultiple("src/main/resources/model/", "src/main/resources/model/output/", false);
         } catch (Exception e) {
             logger.error("Error in main", e);

@@ -30,14 +30,14 @@ public class SysML2PetriNet {
         return petriNet;
     }
 
-    public void transform(String filePath, String outputXMI, String outputDir, Boolean directTransformation) throws Exception {
+    public void transform(String filePath, String outputXMI, String outputDir, boolean directTransformation, boolean isoStandard) throws Exception {
         Namespace rootElement = processor.processSysMLFile(filePath);
         if (rootElement != null) {
             logger.info("Model inputted");
             Transformer transformer = new Transformer(rootElement);
             petriNet = transformer.transform();
             if(directTransformation){
-                transformationDirect(petriNet, outputDir, filePath);
+                transformationDirect(petriNet, outputDir, filePath, isoStandard);
             }else {
                 transformer.saveToXMI(petriNet, outputXMI);
                 transformation(outputXMI, outputDir);
@@ -48,9 +48,9 @@ public class SysML2PetriNet {
         }
     }
 
-    public void transformMultiple(String fileDir, String outputDir,Boolean directTransformation) throws Exception {
+    public void transformMultiple(String fileDir, String outputDir,Boolean directTransformation, boolean isoStandard) throws Exception {
         for(File f : processor.listSysmlFiles(new File(fileDir), false)){
-            transform(f.getAbsolutePath(), outputDir + f.getName() + ".xmi", outputDir, directTransformation);
+            transform(f.getAbsolutePath(), outputDir + f.getName() + ".xmi", outputDir, directTransformation, isoStandard);
         }
     }
 
@@ -61,11 +61,12 @@ public class SysML2PetriNet {
         List<String> arguments = new ArrayList<>();
         GeneratePetriNet generatePetriNet = new GeneratePetriNet(modelURI, targetFolder, arguments);
         generatePetriNet.doGenerate(new BasicMonitor());
+        logger.info("PNML file generated");
     }
 
-    private void transformationDirect(PetriNet petriNet, String outputDir, String filePath) throws IOException {
+    private void transformationDirect(PetriNet petriNet, String outputDir, String filePath, boolean isoStandard) throws IOException {
         TransformerPNML transformerPnml = new TransformerPNML(petriNet, filePath);
-        transformerPnml.saveToPNML(outputDir);
+        transformerPnml.saveToPNML(outputDir, isoStandard);
         logger.info("Saved PNML to: {}", outputDir);
     }
 }

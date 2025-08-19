@@ -32,7 +32,7 @@ public class TransformerPNML {
      * @param outputDirectory Output directory
      * @throws IOException IO errors
      */
-    public void saveToPNML(String outputDirectory) throws IOException {
+    public void saveToPNML(String outputDirectory, boolean isoStandard) throws IOException {
         // Create output directory if it doesn't exist
         File outputDir = new File(outputDirectory);
         if (!outputDir.exists() && outputDir.mkdirs()) {
@@ -47,7 +47,11 @@ public class TransformerPNML {
             // Write XML declaration, and PNML header
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.write(System.lineSeparator());
-            writer.write("<pnml>");
+            if(isoStandard) {
+                writer.write("<pnml xmlns=\"http://www.pnml.org/version-2009/grammar/pnml\">");
+            }else{
+                writer.write("<pnml>");
+            }
             writer.write(System.lineSeparator());
             writer.write("  ");
             // PTNet type
@@ -62,7 +66,11 @@ public class TransformerPNML {
                     // Write initial marking
                     if (place.getInitialMarking() > 0) {
                         writer.write("        <initialMarking>\n");
-                        writer.write("          <value>" + place.getInitialMarking() + "</value>\n");
+                        if(isoStandard){
+                            writer.write("          <text>" + place.getInitialMarking() + "</text>\n");
+                        }else {
+                            writer.write("          <value>" + place.getInitialMarking() + "</value>\n");
+                        }
                         writer.write("        </initialMarking>\n");
                     }
                     writer.write("      </place>\n");
@@ -75,7 +83,11 @@ public class TransformerPNML {
             for (Arc arc : petriNet.getArcs()) {
                 writer.write("      <arc id=\"" + arc.getName() + "\" source=\"" + arc.getSource().getName() + "\" target=\"" + arc.getTarget().getName() + "\">\n");
                 writer.write("        <inscription>\n");
-                writer.write("          <value>" + arc.getWeight() + "</value>\n");
+                if(isoStandard) {
+                    writer.write("          <text>" + arc.getWeight() + "</text>\n");
+                }else {
+                    writer.write("          <value>" + arc.getWeight() + "</value>\n");
+                }
                 writer.write("        </inscription>\n");
                 writer.write("      </arc>\n");
             }
