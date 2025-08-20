@@ -1,4 +1,4 @@
-## SysML2PetriNet
+# SysML2PetriNet
 Transform SysML v2 activity-like models (.sysml) into Petri Nets and export PNML.
 
 The pipeline performs 2 transformations:
@@ -9,7 +9,7 @@ The pipeline performs 2 transformations:
 
 The project includes sample models and JUnit tests that validate generated PNML against the PTNet RNG schema.
 
-### Key capabilities
+## Key capabilities
 - Parse SysML v2 models using the official Xtext-based SysML toolchain
 - Build an intermediate Petri Net model (Places, Transitions, Arcs)
 - Export PNML (2009 grammar) with optional ISO-style `<text>` vs legacy `<value>` inscription/marking
