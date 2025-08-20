@@ -1,11 +1,11 @@
 ## SysML2PetriNet
+Transform SysML v2 activity-like models (.sysml) into Petri Nets and export PNML.
 
-Transform SysML v2 activity-like models (.sysml) into Petri Nets and export PNML. The pipeline performs 2 transformations:
-
-- Model-to-Model (M2M): SysML v2 → in-memory Petri Net model (Java classes in `nl.utwente.sysml2petrinet.PetriNet`)
+The pipeline performs 2 transformations:
+- Model-to-Model (M2M): SysML v2 -> in-memory Petri Net model (Java classes in `nl.utwente.sysml2petrinet.PetriNet`)
 - Model-to-Text (M2T):
-  - Indirect: Petri Net → EMF XMI → Acceleo generates PNML
-  - Direct: Petri Net → PNML writer (no intermediate XMI)
+  - Indirect: Petri Net -> EMF XMI -> Acceleo generates PNML
+  - Direct: Petri Net -> PNML writer (no intermediate XMI)
 
 The project includes sample models and JUnit tests that validate generated PNML against the PTNet RNG schema.
 
@@ -27,9 +27,9 @@ SysML2PetriNet/
 │  │  │  ├─ Main.java                      # Simple entry point using example model
 │  │  │  ├─ SysML2PetriNet.java            # Orchestrates end-to-end transformation
 │  │  │  ├─ SysMLProcessor.java            # Loads SysML libraries and parses input
-│  │  │  ├─ m2m/Transformer.java           # SysML → PetriNet (in-memory)
-│  │  │  ├─ m2t_direct/TransformerPNML.java# Direct PetriNet → PNML writer
-│  │  │  ├─ m2t/src/.../GeneratePetriNet.java
+│  │  │  ├─ m2m/Transformer.java           # SysML -> PetriNet (in-memory)
+│  │  │  ├─ m2t_direct/TransformerPNML.java# Direct PetriNet -> PNML writer
+│  │  │  ├─ m2t/src/.../GeneratePetriNet.java # Model to text transformation executor
 │  │  │  └─ PetriNet/                      # In-memory Petri Net model
 │  │  │     ├─ Arc.java, Node.java, Place.java, Transition.java, PetriNet.java
 │  │  └─ resources/
@@ -69,7 +69,7 @@ mvn -q clean package -DskipTests
 
 ## Run (from the command line)
 
-Use the provided `Main` class with Maven Exec Plugin (downloaded automatically when invoked):
+Use the provided `Main` class with the Maven Exec Plugin (downloaded automatically when invoked):
 
 ```bash
 mvn -q exec:java -Dexec.mainClass=nl.utwente.sysml2petrinet.Main
@@ -82,6 +82,7 @@ Console logging is configured via `src/main/resources/log4j2.xml` (root level `d
 
 ## Using your own models
 1. Place your `.sysml` file anywhere (e.g., under `src/main/resources/model/`).
-2. Run either programmatic call or the `Main` class as shown above.
-3. Find PNML in your chosen output directory.
+2. Change the variable in the `Main` class to match the path.
+3. Run either the programmatic call or the `Main` class as shown above.
+4. Find PNML in your chosen output directory.
 
